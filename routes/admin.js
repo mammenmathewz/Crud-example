@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
      res.render('./admin/adminhome');
      console.log(req.body);
    } else {
-     res.redirect('/');
+     res.redirect('/admin/adminlogin');
    }
  });
  
