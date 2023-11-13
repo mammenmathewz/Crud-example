@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 5005
  app.use(express.json())
  app.use(express.urlencoded({extended:false}))
 
+
 app.use(cookiePaser())
  app.use(session(
     {
@@ -51,4 +52,8 @@ app.use('/home', require('./routes/login'));
 
 
 
-app.listen(PORT,()=>{console.log(`Server is running on http://localhost:${PORT}`)})
+app.listen(PORT, (error) => {
+   if (error) throw error;
+   console.log(`Server is running on http://localhost:${PORT}`);
+ });
+ 
