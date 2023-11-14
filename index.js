@@ -32,7 +32,16 @@ app.use(cookiePaser())
     }
  ))
 
- 
+ app.use('/admin',session(
+   {
+       secret:"secret key",
+       saveUninitialized:true,
+       resave:false,
+       cookie:{
+        maxAge:24 * 60 * 60 * 1000 
+       }
+   }
+))
  app.use((req,res,next)=>{
     res.locals.message=req.session.message
     delete req.session.message;
