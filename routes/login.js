@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
   req.session.user = user;
 
   // Redirect to home
-  res.redirect('/home');
+  res.render('home', { name: user.name });
 });
 
 
