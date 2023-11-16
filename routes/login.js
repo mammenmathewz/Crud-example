@@ -30,6 +30,7 @@ router.post('/signup', async (req, res) => {
     });
     try {
         await newUser.save();
+        req.session.message = 'Signup successfully completed';
         res.redirect('/');
     } catch (err) {
         res.json({message: err.message, type: 'danger'});
@@ -68,7 +69,7 @@ router.get('/logout', (req, res) => {
       console.log(err);
       res.render('error',{title: "404"})
     } else {
-      res.render('login')
+      res.render('login',{message:"logout successfully"})
     }
   })
 })

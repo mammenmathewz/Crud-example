@@ -21,6 +21,13 @@
                 <form style="width: 23rem; " action="login" method="post" >
       
                   <h2 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Login</h2>
+
+                  <% if (message) { %>
+                    <div class="alert alert-dismissible fade show alert-success" role="alert">
+                      <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
+                        <%= message %>
+                    </div>
+                <% } %>
       
                   <div class="form-outline mb-4">
                     <input type="email" name="email" id="form2Example18" class="form-control form-control-lg" />

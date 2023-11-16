@@ -50,7 +50,8 @@ router.post('/adminhome', async (req, res) => {
       console.log(err);
       res.render('error',{title: "404"})
     } else {
-      res.render('adminlogin')
+
+      res.render('adminlogin' ,{message:"logout successfully"})
     }
   })
 })
@@ -107,6 +108,7 @@ router.post('/edit/:id', async (req, res) => {
     user.password = req.body.password;
 
     await user.save();
+    req.session.message = 'User successfully updated';
     res.redirect('/admin/adminhome');
   } catch (err) {
     console.error(err);
@@ -122,6 +124,8 @@ router.get('/delete/:id', async (req, res) => {
       return res.status(404).send('User not found');
     }
     await user.deleteOne();
+    req.session.message = 'User successfully removed';
+
     res.redirect('/admin/adminhome');
   } catch (err) {
     console.error(err);
