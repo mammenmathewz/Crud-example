@@ -5,9 +5,9 @@ const User = require('../models/users');
 const session = require('express-session');
 const app = express();
 
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
+
 
 router.get('/', (req, res) => {
   if (req.session.user) {
@@ -31,17 +31,6 @@ router.get('/adminhome', async (req, res) => {
   }
   });
 
-// router.get('/adminhome', (req, res) => {
-//   if (req.session.user) {
-//      return res.render('adminhome');
-//   }
-//   res.redirect('/admin');
-// });
-
-
-// router.get('/home',(req, res) => {
-//     res.render('./admin/adminhome')
-//  }); 
 
 router.post('/adminhome', async (req, res) => {
   if (req.body.email === "admin@gmail.com" && req.body.password === "12345") {
@@ -92,7 +81,7 @@ router.get('/newuser',(req,res)=>{
 
 //update//
 
-router.get('/admin/edit/:id', async (req, res) => {
+router.get('/edit/:id', async (req, res) => {
   try {
     let user = await User.findById(req.params.id);
     if (!user) {
@@ -106,7 +95,7 @@ router.get('/admin/edit/:id', async (req, res) => {
 });
 
 
-router.post('admin/edit/:id', async (req, res) => {
+router.post('/edit/:id', async (req, res) => {
   try {
     let user = await User.findById(req.params.id);
     if (!user) {
@@ -118,7 +107,7 @@ router.post('admin/edit/:id', async (req, res) => {
     user.password = req.body.password;
 
     await user.save();
-    res.redirect('/adminhome');
+    res.redirect('/admin/adminhome');
   } catch (err) {
     console.error(err);
     res.send('Error occurred while updating user data');
@@ -126,17 +115,34 @@ router.post('admin/edit/:id', async (req, res) => {
 });
 
 
-router.get('/admin/delete/:id', async (req, res) => {
+router.get('/delete/:id', async (req, res) => {
   try {
-    let user = await User.findByIdAndRemove(req.params.id);
+    let user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).send('User not found');
     }
-    res.redirect('/adminhome');
+    await user.deleteOne();
+    res.redirect('/admin/adminhome');
   } catch (err) {
     console.error(err);
     res.send('Error occurred while deleting user');
   }
 });
+
+router.get('/search', async (req, res) => {
+  let q = req.query.q;
+  if (!q) {
+    return res.status(400).send('Search term is required');
+  }
+  try {
+    let users = await User.find({ $text: { $search: q } });
+    res.render('adminhome', { users: users });
+  } catch (err) {
+    console.error(err);
+    res.send('Error occurred while searching users');
+  }
+});
+
+
 
 module.exports=router

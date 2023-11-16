@@ -5,9 +5,11 @@ const cookiePaser = require('cookie-parser')
 const mongoose = require('mongoose')
 const adminRoutes = require('./routes/admin');
 
+
 const app = express()
 const PORT = process.env.PORT || 5005
  
+
 //db connection//
  mongoose.connect(process.env.DB_URI,)
  const db=mongoose.connection
@@ -58,7 +60,10 @@ app.use('/', require("./routes/login"));
 app.use('/signup', require("./routes/login"));
 app.use('/home', require('./routes/login'));
 
-
+app.use(function(err, req, res, next) {
+   console.error(err.stack); // This will print the stack trace of the error
+   res.status(500).send('Something broke!');
+ });
 
 
 app.listen(PORT, (error) => {
