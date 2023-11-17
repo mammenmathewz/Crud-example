@@ -22,19 +22,26 @@ router.get('/home',(req,res)=>{
 })
 
 router.post('/signup', async (req, res) => {
-    const newUser = new User({ // Changed 'user' to 'User'
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        password: req.body.password
-    });
-    try {
-        await newUser.save();
-        req.session.message = 'Signup successfully completed';
-        res.redirect('/');
-    } catch (err) {
-        res.json({message: err.message, type: 'danger'});
-    }
+  // Check if user already exists
+  const existingUser = await User.findOne({ email: req.body.email });
+  if (existingUser) {
+      return res.render('signup_page',{ message: 'User already exists', type: 'danger' });
+  }
+
+  // If user does not exist, proceed with signup
+  const newUser = new User({
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      password: req.body.password
+  });
+  try {
+      await newUser.save();
+      req.session.message = 'Signup successfully completed';
+      res.redirect('/');
+  } catch (err) {
+      res.json({ message: err.message, type: 'danger' });
+  }
 });
 
 
@@ -45,12 +52,12 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   if (!user) {
-      return res.status(400).send('Email is not found');
+      return res.render('login',{message:"Invalid email-id", type: 'danger'});
   }
 
   // Validate password
   if (password !== user.password) {
-      return res.status(400).send('Invalid password');
+    return res.render('login',{message:"Invalid password", type: 'danger'});
   }
 
   // Set user session
@@ -69,7 +76,7 @@ router.get('/logout', (req, res) => {
       console.log(err);
       res.render('error',{title: "404"})
     } else {
-      res.render('login',{message:"logout successfully"})
+      res.render('login',{message:"logout successfully",type:'success'})
     }
   })
 })

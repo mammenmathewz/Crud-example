@@ -39,7 +39,7 @@ router.post('/adminhome', async (req, res) => {
    res.render('adminhome', { users: users });
     console.log(req.body);
   } else {
-    res.redirect('adminlogin');
+    res.render('adminlogin',{message:"Invalide email-id or password",type: 'danger'});
   }
 });
 
@@ -51,7 +51,7 @@ router.post('/adminhome', async (req, res) => {
       res.render('error',{title: "404"})
     } else {
 
-      res.render('adminlogin' ,{message:"logout successfully"})
+      res.render('adminlogin' ,{message:"logout successfully",type: 'success'})
     }
   })
 })
@@ -64,6 +64,12 @@ router.get('/newuser',(req,res)=>{
  })
 
  router.post('/add', async (req, res) => {
+  // Check if user already exists
+  const existingUser = await User.findOne({ email: req.body.email });
+  if (existingUser) {
+      return res.render('adduser',{ message: 'User already exists', type: 'danger' });
+  }
+
   const newUser = new User({ // Changed 'user' to 'User'
       name: req.body.name,
       email: req.body.email,
@@ -100,7 +106,7 @@ router.post('/edit/:id', async (req, res) => {
   try {
     let user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.render('edituser',{message:'User not found'});
     }
     user.name = req.body.name;
     user.email = req.body.email;
@@ -136,7 +142,7 @@ router.get('/delete/:id', async (req, res) => {
 router.get('/search', async (req, res) => {
   let q = req.query.q;
   if (!q) {
-    return res.status(400).send('Search term is required');
+    return res.render('adminhome', { error: 'Search ' });
   }
   try {
     let users = await User.find({ $text: { $search: q } });

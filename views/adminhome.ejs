@@ -24,8 +24,8 @@
           <li class="nav-item">
           </li>
           <li>
-            <form class="d-flex" role="search" action="/admin/search" method="get">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+            <form class="d-flex" role="search" action="/admin/search" method="get" onsubmit="checkForm(event)">
+              <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
               <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             
@@ -109,7 +109,15 @@
     </tbody>
   </table>
 
-
+  <script>
+    function checkForm(e) {
+      let searchInput = document.getElementById('searchInput');
+      if (!searchInput.value.trim()) {
+        e.preventDefault();
+        alert('Search term is required');
+      }
+    }
+    </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>

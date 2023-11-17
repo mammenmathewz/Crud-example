@@ -17,7 +17,7 @@
 
                   <h2 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Admin Login</h2>
                   <% if (message) { %>
-                    <div class="alert alert-dismissible fade show alert-success" role="alert">
+                    <div class="alert alert-dismissible fade show alert-<%= type %>" role="alert">
                       <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
                         <%= message %>
                     </div>
