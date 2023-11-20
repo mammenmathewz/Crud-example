@@ -5,6 +5,13 @@ const User = require('../models/users') // Changed 'user' to 'User'
 const users = require('../models/users')
 const session = require('express-session')
 
+router.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+
+
 router.get('/',(req,res)=>{
   if (req.session.user) {
     return res.redirect('home');
@@ -16,10 +23,15 @@ router.get('/',(req,res)=>{
 router.get('/signup',(req,res)=>{
     res.render('signup_page')
  })
-router.get('/home',(req,res)=>{
-    res.render('home')
-    
-})
+ router.get('/home', (req, res) => {
+  if (req.session.user) {
+    res.render('home', { name: req.session.user.name });
+  } else {
+    // Redirect to login if no user is in the session
+    res.redirect('/');
+  }
+});
+
 
 router.post('/signup', async (req, res) => {
   // Check if user already exists
@@ -64,7 +76,9 @@ router.post('/login', async (req, res) => {
   req.session.user = user;
 
   // Redirect to home
-  res.render('home', { name: user.name });
+  // Redirect to home
+res.redirect('/home');
+
 });
 
 

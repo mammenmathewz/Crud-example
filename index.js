@@ -44,6 +44,9 @@ app.use(cookiePaser())
        }
    }
 ))
+
+
+
  app.use((req,res,next)=>{
     res.locals.message=req.session.message
     delete req.session.message;
@@ -59,6 +62,20 @@ app.use('/admin', adminRoutes);
 app.use('/', require("./routes/login"));
 app.use('/signup', require("./routes/login"));
 app.use('/home', require('./routes/login'));
+
+app.use('*', (req, res) => {
+   res.status(404).send(`
+    <html>
+      <body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: black;">
+        <h1 style="color: red; text-align: center;">
+          404 Not Found
+        </h1>
+        <a href="javascript:history.back()" style="display: block; color: white; text-align: center; padding:5px">Go Back</a>
+      </body>
+    </html>
+   `);
+});
+
 
 app.use(function(err, req, res, next) {
    console.error(err.stack); // This will print the stack trace of the error
