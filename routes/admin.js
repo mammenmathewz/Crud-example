@@ -8,40 +8,46 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
 
+router.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 
-router.get('/', (req, res) => {
+router.get('/',async (req, res) => {
   if (req.session.user) {
-     return res.render('adminhome');
+    let users = await User.find({});
+     return res.render('adminhome',{ users: users });
   }
   res.render('adminlogin')
 });
 
+
 router.get('/adminhome', async (req, res) => {
   if (req.session.user) {
     try {
-      let users = await User.find({}); // Fetch all users from the database
-      if (!users) users = []; // If users is undefined, set it to an empty array
-      res.render('adminhome', { users: users }); // Pass the users to the view
+      let users = await User.find({});
+      res.render('adminhome', { users: users });
     } catch (err) {
       console.error(err);
       res.send('Error occurred while fetching data');
     }
-  }else{
+  } else {
     res.redirect('/admin');
   }
-  });
-
-
-router.post('/adminhome', async (req, res) => {
-  if (req.body.email === "admin@gmail.com" && req.body.password === "12345") {
-   req.session.user=req.body.email
-   let users = await User.find({});
-   res.render('adminhome', { users: users });
-    console.log(req.body);
-  } else {
-    res.render('adminlogin',{message:"Invalide email-id or password",type: 'danger'});
-  }
 });
+
+
+
+  router.post('/adminhome', async (req, res) => {
+    if (req.body.email === "admin@gmail.com" && req.body.password === "12345") {
+      req.session.user = req.body.email;
+      // Redirect to '/adminhome' instead of rendering the view
+      res.redirect('/admin/adminhome');
+    } else {
+      res.render('adminlogin', { message: "Invalid email-id or password", type: 'danger' });
+    }
+  });
+  
 
 
  router.get('/logoutadmin', (req, res) => {
