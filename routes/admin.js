@@ -14,7 +14,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/',async (req, res) => {
-  if (req.session.user) {
+  if (req.session.admin) {
     let users = await User.find({});
      return res.render('adminhome',{ users: users });
   }
@@ -23,7 +23,7 @@ router.get('/',async (req, res) => {
 
 
 router.get('/adminhome', async (req, res) => {
-  if (req.session.user) {
+  if (req.session.admin) {
     try {
       let users = await User.find({});
       res.render('adminhome', { users: users });
@@ -40,7 +40,7 @@ router.get('/adminhome', async (req, res) => {
 
   router.post('/adminhome', async (req, res) => {
     if (req.body.email === "admin@gmail.com" && req.body.password === "12345") {
-      req.session.user = req.body.email;
+      req.session.admin = req.body.email;
       // Redirect to '/adminhome' instead of rendering the view
       res.redirect('/admin/adminhome');
     } else {
@@ -50,19 +50,14 @@ router.get('/adminhome', async (req, res) => {
   
 
 
- router.get('/logoutadmin', (req, res) => {
-  req.session.destroy(function (err) {
-    if (err) {
-      console.log(err);
-      res.render('error',{title: "404"})
+  router.get('/logoutadmin', (req, res) => {
+    if (req.session.admin) {
+      req.session.admin = null;
+      res.render('adminlogin', {message: "Logout successfully", type: 'success'});
     } else {
-
-      res.render('adminlogin' ,{message:"logout successfully",type: 'success'})
+      res.render('error', {title: "404"});
     }
   })
-})
-
-
 
 
 router.get('/newuser',(req,res)=>{

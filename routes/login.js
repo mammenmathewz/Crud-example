@@ -83,16 +83,12 @@ res.redirect('/home');
 
 
 
-
 router.get('/logout', (req, res) => {
-  req.session.destroy(function (err) {
-    if (err) {
-      console.log(err);
-      res.redirect('/error');
-    } else {
-      res.redirect('/');
-    }
-  })
+  if (req.session.user) {
+    req.session.user = null;
+    res.redirect('/');
+  } else {
+    res.redirect('/error');
+  }
 })
-
 module.exports=router

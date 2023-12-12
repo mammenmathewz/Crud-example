@@ -36,7 +36,7 @@ app.use(cookiePaser())
 
  app.use('/admin',session(
    {
-       secret:"secret key",
+       secret:"secret kkkey",
        saveUninitialized:true,
        resave:false,
        cookie:{
