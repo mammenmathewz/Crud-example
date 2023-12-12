@@ -1,8 +1,6 @@
-
 const express = require('express')
 const router = express.Router()
-const User = require('../models/users') // Changed 'user' to 'User'
-const users = require('../models/users')
+const User = require('../models/users')
 const session = require('express-session')
 
 router.use((req, res, next) => {
@@ -10,27 +8,30 @@ router.use((req, res, next) => {
   next();
 });
 
-
+// Middleware for checking if a user is authenticated
+function checkAuthenticated(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+}
 
 router.get('/',(req,res)=>{
   if (req.session.user) {
-    return res.redirect('home');
+    return res.redirect('/home');
   }
   res.render("login");
 })
 
-
 router.get('/signup',(req,res)=>{
     res.render('signup_page')
- })
- router.get('/home', (req, res) => {
-  if (req.session.user) {
-    res.render('home', { name: req.session.user.name });
-  } else {
-    // Redirect to login if no user is in the session
-    res.redirect('/');
-  }
+})
+
+router.get('/home', checkAuthenticated, (req, res) => {
+  res.render('home', { name: req.session.user.name });
 });
+
 
 
 router.post('/signup', async (req, res) => {
@@ -76,7 +77,6 @@ router.post('/login', async (req, res) => {
   req.session.user = user;
 
   // Redirect to home
-  // Redirect to home
 res.redirect('/home');
 
 });
@@ -88,12 +88,11 @@ router.get('/logout', (req, res) => {
   req.session.destroy(function (err) {
     if (err) {
       console.log(err);
-      res.render('error',{title: "404"})
+      res.redirect('/error');
     } else {
-      res.render('login',{message:"logout successfully",type:'success'})
+      res.redirect('/');
     }
   })
 })
-
 
 module.exports=router
